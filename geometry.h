@@ -37,8 +37,6 @@ class Rectangle {
     Position position;
 public:
     Rectangle(int width, int height, const Position& pos = Position(0,0));
-    Rectangle(const Rectangle& r) : w(r.w), h(r.h), position(r.position) {}
-    Rectangle(Rectangle&& r) : w(r.w), h(r.h), position(r.position) {}
     int width() const;
     int height() const;
     Position pos() const;
@@ -46,8 +44,6 @@ public:
     int area() const;
     bool operator==(const Rectangle&) const;
     Rectangle& operator+=(const Vector&);
-    //Rectangle& operator=(const Rectangle&);
-    //Rectangle& operator=(Rectangle&&);
 };
 
 class Rectangles{
