@@ -65,6 +65,6 @@ Rectangles operator+(const Vector&, Rectangles);
 
 Rectangle merge_horizontally(const Rectangle& r1, const Rectangle& r2);
 Rectangle merge_vertically(const Rectangle& r1, const Rectangle& r2);
-Rectangle merge_all(const Rectangles& recs);
+Rectangle merge_all(const Rectangles& r);
 
 #endif //GEOMETRY_H
