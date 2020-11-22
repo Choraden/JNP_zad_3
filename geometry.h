@@ -1,6 +1,8 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
+#include <vector>
+
 class Vector {
     int coor_x, coor_y;
 public:
@@ -46,11 +48,23 @@ public:
     Rectangle& operator+=(const Vector&);
     //Rectangle& operator=(const Rectangle&);
     //Rectangle& operator=(Rectangle&&);
-
-
 };
 
-Rectangle merge_horizontally(Rectangle r1, Rectangle r2);
-Rectangle merge_vertically(Rectangle r1, Rectangle r2);
+class Rectangles{
+public:
+    std::vector<Rectangle> recs;
+    Rectangles(std::initializer_list<Rectangle> r) : recs(r) {}
+    Rectangles() {}
+    int size() const;
+    Rectangles& operator+=(const Vector&);
+    bool operator==(const Rectangles&) const;
+};
+
+Rectangles operator+(Rectangles, const Vector&);
+Rectangles operator+(const Vector&, Rectangles);
+
+Rectangle merge_horizontally(const Rectangle& r1, const Rectangle& r2);
+Rectangle merge_vertically(const Rectangle& r1, const Rectangle& r2);
+Rectangle merge_all(const Rectangles& recs);
 
 #endif //GEOMETRY_H
