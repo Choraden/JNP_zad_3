@@ -145,19 +145,17 @@ Rectangle merge_horizontally(const Rectangle &r1, const Rectangle &r2) {
     assert(r1.width() == r2.width() && r1.pos().x() == r2.pos().x() &&
            r1.pos().y() + r1.height() == r2.pos().y());
     return {r2.width(), r1.height() + r2.height(), r1.pos()};
-
 }
 
 Rectangle merge_vertically(const Rectangle &r1, const Rectangle &r2) {
-    assert(r1.height() == r2.height());
-    assert (r1.pos().y() == r2.pos().y());
-    assert(r1.pos().x() + r1.width() == r2.pos().x());
+    assert (r1.height() == r2.height() && r1.pos().y() == r2.pos().y() &&
+           r1.pos().x() + r1.width() == r2.pos().x());
     return {r1.width() + r2.width(), r2.height(), r1.pos()};
 }
 
-static Rectangle merge_two(const Rectangle &r1, const Rectangle &r2){
-    if(r1.width() == r2.width() && r1.pos().x() == r2.pos().x() &&
-       r1.pos().y() + r1.height() == r2.pos().y()){
+static Rectangle merge_two(const Rectangle &r1, const Rectangle &r2) {
+    if (r1.width() == r2.width() && r1.pos().x() == r2.pos().x() &&
+       r1.pos().y() + r1.height() == r2.pos().y()) {
         return merge_horizontally(r1, r2);
     }
     return merge_vertically(r1, r2);
@@ -165,14 +163,14 @@ static Rectangle merge_two(const Rectangle &r1, const Rectangle &r2){
 
 static Rectangle merge_all_rec(const Rectangles &r, int end) {
     if (end == 1) {
-        return merge_two(r.recs[end-1], r.recs[end]);
+        return merge_two(r.recs[end - 1], r.recs[end]);
     }
     return merge_two(merge_all_rec(r, end - 1), r.recs[end]);
 }
 
 Rectangle merge_all(const Rectangles &r) {
     assert(r.size() > 0);
-    if(r.size() == 1){
+    if (r.size() == 1) {
         return r.recs[0];
     }
     return merge_all_rec(r, r.size() - 1);
