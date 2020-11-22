@@ -25,6 +25,10 @@ Vector& Vector::operator+=(const Vector& v) {
     this->coor_y += v.coor_y;
     return *this;
 }
+
+Vector operator+(Vector v1, const Vector& v2) {
+    return v1 += v2;
+}
 ///<-----------
 
 ///< Position
@@ -53,6 +57,14 @@ Position& Position::operator+=(const Vector& v) {
     this->pos_x += v.x();
     this->pos_y += v.y();
     return *this;
+}
+
+Position operator+(Position p, const Vector& v) {
+    return p += v;
+}
+
+Position operator+(const Vector& v, Position p) {
+    return p += v;
 }
 ///<-----------
 
@@ -94,11 +106,11 @@ bool Rectangle::operator==(const Rectangle& r) const {
 }
 
 Rectangle& Rectangle::operator+=(const Vector& v) {
-    this->position+=v;
+    this->position += v;
     return *this;
 }
 
-Rectangle& Rectangle::operator=(const Rectangle& r) {
+/*Rectangle& Rectangle::operator=(const Rectangle& r) {
     if(this == &r) {
         return *this;
     }
@@ -116,7 +128,7 @@ Rectangle& Rectangle::operator=(Rectangle&& r) {
     this->h = std::move(r.h);
     this->position = std::move(r.position);
     return *this;
-}
+}*/
 
 
 
@@ -148,15 +160,17 @@ Rectangle merge_vertically(Rectangle r1, Rectangle r2) {
     }
 }
 
-/*int main() {
+int main() {
     Vector v1(3, 4);
     Position p1(1, 2);
     Rectangle r1(10,10, p1);
-    r1+=v1;
+    r1 += v1;
     std::cout << r1.reflection().pos().x() << " " << r1.reflection().pos().y() << "\n";
     Rectangle r2(10,20);
-    r2 = r1;
-
-    //p1 = v1;
-}*/
+    std::cout << r2.reflection().pos().x() << " " << r2.reflection().pos().y() << "\n";
+    p1 = p1 + v1;
+    v1 = v1 + v1;
+    Position p2 = v1 + p1;
+    std::cout << p1.x() << " " << p1.y() << " " << p2.x() << " " << p2.y() << "\n";
+}
 

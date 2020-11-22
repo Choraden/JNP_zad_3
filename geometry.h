@@ -12,6 +12,8 @@ public:
     Vector& operator+=(const Vector&);
 };
 
+Vector operator+(Vector, const Vector&);
+
 class Position {
     int pos_x, pos_y;
 public:
@@ -22,15 +24,19 @@ public:
     static const Position& origin();
     bool operator==(const Position&) const;
     Position& operator+=(const  Vector&);
+
 };
+
+Position operator+(Position, const Vector&);
+Position operator+(const Vector&, Position);
 
 class Rectangle {
     int w, h;
     Position position;
 public:
     Rectangle(int width, int height, const Position& pos = Position(0,0));
-    Rectangle(const Rectangle& r) : w(r.w), h(r.h),position(r.position){}
-    Rectangle(Rectangle&& r) : w(r.w), h(r.h),position(r.position){}
+    Rectangle(const Rectangle& r) : w(r.w), h(r.h), position(r.position) {}
+    Rectangle(Rectangle&& r) : w(r.w), h(r.h), position(r.position) {}
     int width() const;
     int height() const;
     Position pos() const;
@@ -38,8 +44,8 @@ public:
     int area() const;
     bool operator==(const Rectangle&) const;
     Rectangle& operator+=(const Vector&);
-    Rectangle& operator=(const Rectangle&);
-    Rectangle& operator=(Rectangle&&);
+    //Rectangle& operator=(const Rectangle&);
+    //Rectangle& operator=(Rectangle&&);
 
 
 };
