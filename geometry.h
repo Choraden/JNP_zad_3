@@ -2,6 +2,7 @@
 #define GEOMETRY_H
 
 #include <vector>
+#include <cassert>
 
 class Vector;
 class Position;
@@ -73,10 +74,10 @@ public:
     const Rectangle &operator[](const size_t i) const;
 };
 
-Rectangles operator+(Rectangles, const Vector&);
-Rectangles operator+(const Vector&, Rectangles);
-//Rectangles operator+(Rectangles&&, const Vector&);
-//Rectangles operator+(const Vector&, Rectangles&&);
+Rectangles operator+(const Rectangles&, const Vector&);
+Rectangles operator+(const Vector&, const Rectangles&);
+Rectangles operator+(Rectangles&&, const Vector&);
+Rectangles operator+(const Vector&, Rectangles&&);
 
 Rectangle merge_horizontally(const Rectangle& r1, const Rectangle& r2);
 Rectangle merge_vertically(const Rectangle& r1, const Rectangle& r2);

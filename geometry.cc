@@ -154,25 +154,24 @@ bool Rectangles::operator==(const Rectangles &r) const {
     return true;
 }
 
-Rectangles operator+(Rectangles r, const Vector &v) {
-    return r += v;
+Rectangles operator+(const Rectangles& r, const Vector &v) {
+    Rectangles result(r);
+    result+=v;
+    return result;
 }
 
-Rectangles operator+(const Vector &v, Rectangles r) {
-    return r += v;
+Rectangles operator+(const Vector &v,const Rectangles& r) {
+    return r + v;
 }
 
-/*Rectangles operator+(Rectangles&& recs, const Vector& v) {
-    Rectangles res(std::move(recs));
-    res += v;
-    return res;
+Rectangles operator+(Rectangles&& r, const Vector& v) {
+    Rectangles result(std::move(r));
+    result+=v;
+    return result;
 }
-
-Rectangles operator+(const Vector& v, Rectangles&& recs) {
-    Rectangles res(std::move(recs));
-    res += v;
-    return res;
-}*/
+Rectangles operator+(const Vector& v, Rectangles&& r) {
+    return std::move(r) + v;
+}
 
 Rectangle& Rectangles::operator[](const size_t i) {
     assert(i < recs.size());
@@ -194,13 +193,13 @@ Rectangle merge_horizontally(const Rectangle &r1, const Rectangle &r2) {
 
 Rectangle merge_vertically(const Rectangle &r1, const Rectangle &r2) {
     assert (r1.height() == r2.height() && r1.pos().y() == r2.pos().y() &&
-           r1.pos().x() + r1.width() == r2.pos().x());
+            r1.pos().x() + r1.width() == r2.pos().x());
     return {r1.width() + r2.width(), r2.height(), r1.pos()};
 }
 
 static Rectangle merge_two(const Rectangle &r1, const Rectangle &r2) {
     if (r1.width() == r2.width() && r1.pos().x() == r2.pos().x() &&
-       r1.pos().y() + r1.height() == r2.pos().y()) {
+        r1.pos().y() + r1.height() == r2.pos().y()) {
         return merge_horizontally(r1, r2);
     }
     return merge_vertically(r1, r2);
@@ -219,30 +218,4 @@ Rectangle merge_all(const Rectangles &r) {
         return r[0];
     }
     return merge_all_rec(r, r.size() - 1);
-}
-
-int main() {
-     Vector v1(3, 4);
-     Position p1(1, 2);
-     Rectangle r1(10,10, p1);
-     r1 += v1;
-     std::cout << r1.reflection().pos().x() << " " << r1.reflection().pos().y() << "\n";
-     Rectangle r2(10,20);
-     std::cout << r2.reflection().pos().x() << " " << r2.reflection().pos().y() << "\n";
-     p1 = p1 + v1;
-     v1 = v1 + v1;
-     Position p2 = v1 + p1;
-     std::cout << p1.x() << " " << p1.y() << " " << p2.x() << " " << p2.y() << "\n";
-     Rectangles k({Rectangle(2, 2), Rectangle(2, 2, Position(2, 0)),
-                 Rectangle(2, 2, Position(4, 0))});
-     Rectangles k2({Rectangle(2, 2), Rectangle(2, 2, Position(2, 0)),
-                 Rectangle(4, 2, Position(0, -2))});
-
-     Rectangle r = merge_all(k);
-     std::cout << r.width() << " " << r.height() << " " << r.pos().x() << " ";
-     r2 = merge_all(k2);
-     std::cout << r2.width() << " " << r2.height();
-     Vector vec1(1, 2);
-     Position pos1(vec1);
-     std::cout << pos1.x() << " " << pos1.y() << std::endl;
 }
