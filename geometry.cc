@@ -2,26 +2,40 @@
 #include <iostream>
 #include <cassert>
 
-///< Vector
-int Vector::x() const {
-    return coor_x;
+
+///< Abstract_point
+Abstract_point::Abstract_point(int x, int y) : pos_x(x), pos_y(y) {}
+
+Abstract_point::Abstract_point(const Vector& v) : pos_x(v.x()), pos_y(v.y()) {}
+
+Abstract_point::Abstract_point(const Position& p) : pos_x(p.x()), pos_y(p.y()) {}
+
+int Abstract_point::x() const {
+    return pos_x;
 }
 
-int Vector::y() const {
-    return coor_y;
+int Abstract_point::y() const {
+    return pos_y;
 }
+///---------------
+
+
+///< Vector
+Vector::Vector(int x, int y) : Abstract_point(x, y) {}
+
+Vector::Vector(const Position& p) : Abstract_point(p) {}
 
 Vector Vector::reflection() const {
-    return {this->coor_y, this->coor_x};
+    return {pos_y, pos_x};
 }
 
 bool Vector::operator==(const Vector &v) const {
-    return this->coor_x == v.coor_x && this->coor_y == v.coor_y;
+    return pos_x == v.pos_x && pos_y == v.pos_y;
 }
 
 Vector &Vector::operator+=(const Vector &v) {
-    this->coor_x += v.coor_x;
-    this->coor_y += v.coor_y;
+    pos_x += v.pos_x;
+    pos_y += v.pos_y;
     return *this;
 }
 
@@ -31,16 +45,12 @@ Vector operator+(Vector v1, const Vector &v2) {
 ///<-----------
 
 ///< Position
-int Position::x() const {
-    return pos_x;
-}
+Position::Position(int x, int y) : Abstract_point(x, y) {}
 
-int Position::y() const {
-    return pos_y;
-}
+Position::Position(const Vector& v) : Abstract_point(v) {}
 
 Position Position::reflection() const {
-    return {this->pos_y, this->pos_x};
+    return {pos_y, pos_x};
 }
 
 const Position &Position::origin() {
@@ -49,12 +59,12 @@ const Position &Position::origin() {
 }
 
 bool Position::operator==(const Position &p) const {
-    return this->pos_x == p.pos_x && this->pos_y == p.pos_y;
+    return pos_x == p.pos_x && pos_y == p.pos_y;
 }
 
 Position &Position::operator+=(const Vector &v) {
-    this->pos_x += v.x();
-    this->pos_y += v.y();
+    pos_x += v.x();
+    pos_y += v.y();
     return *this;
 }
 
@@ -88,7 +98,7 @@ Position Rectangle::pos() const {
 }
 
 Rectangle Rectangle::reflection() const {
-    return {this->h, this->w, this->position.reflection()};
+    return {h, w, position.reflection()};
 }
 
 int Rectangle::area() const {
@@ -96,16 +106,29 @@ int Rectangle::area() const {
 }
 
 bool Rectangle::operator==(const Rectangle &r) const {
-    return this->h == r.h && this->w == r.w && this->position == r.position;
+    return h == r.h && w == r.w && position == r.position;
 }
 
 Rectangle &Rectangle::operator+=(const Vector &v) {
-    this->position += v;
+    position += v;
     return *this;
 }
 
+Rectangle operator+(Rectangle p, const Vector &v) {
+    return p += v;
+}
+
+Rectangle operator+(const Vector &v, Rectangle p) {
+    return p += v;
+}
+
 ///<Rectangles
-int Rectangles::size() const {
+
+Rectangles::Rectangles() {}
+
+Rectangles::Rectangles(std::initializer_list<Rectangle> &&r) : recs(r) {}
+
+size_t Rectangles::size() const {
     if (!recs.empty()) {
         return recs.size();
     }
@@ -123,7 +146,7 @@ bool Rectangles::operator==(const Rectangles &r) const {
     if (recs.size() != r.size()) {
         return false;
     }
-    for (int i = 0; i < r.size(); i++) {
+    for (size_t i = 0; i < r.size(); i++) {
         if (!(recs.at(i) == r.recs.at(i))) {
             return false;
         }
@@ -138,6 +161,28 @@ Rectangles operator+(Rectangles r, const Vector &v) {
 Rectangles operator+(const Vector &v, Rectangles r) {
     return r += v;
 }
+
+/*Rectangles operator+(Rectangles&& recs, const Vector& v) {
+    Rectangles res(std::move(recs));
+    res += v;
+    return res;
+}
+
+Rectangles operator+(const Vector& v, Rectangles&& recs) {
+    Rectangles res(std::move(recs));
+    res += v;
+    return res;
+}*/
+
+Rectangle& Rectangles::operator[](const size_t i) {
+    assert(i < recs.size());
+    return recs[i];
+}
+const Rectangle& Rectangles::operator[](const size_t i) const {
+    assert(i < recs.size());
+    return recs[i];
+}
+
 
 ///<-----------
 
@@ -163,20 +208,20 @@ static Rectangle merge_two(const Rectangle &r1, const Rectangle &r2) {
 
 static Rectangle merge_all_rec(const Rectangles &r, int end) {
     if (end == 1) {
-        return merge_two(r.recs[end - 1], r.recs[end]);
+        return merge_two(r[end - 1], r[end]);
     }
-    return merge_two(merge_all_rec(r, end - 1), r.recs[end]);
+    return merge_two(merge_all_rec(r, end - 1), r[end]);
 }
 
 Rectangle merge_all(const Rectangles &r) {
     assert(r.size() > 0);
     if (r.size() == 1) {
-        return r.recs[0];
+        return r[0];
     }
     return merge_all_rec(r, r.size() - 1);
 }
 
-/*int main() {
+int main() {
      Vector v1(3, 4);
      Position p1(1, 2);
      Rectangle r1(10,10, p1);
@@ -188,15 +233,16 @@ Rectangle merge_all(const Rectangles &r) {
      v1 = v1 + v1;
      Position p2 = v1 + p1;
      std::cout << p1.x() << " " << p1.y() << " " << p2.x() << " " << p2.y() << "\n";
+     Rectangles k({Rectangle(2, 2), Rectangle(2, 2, Position(2, 0)),
+                 Rectangle(2, 2, Position(4, 0))});
+     Rectangles k2({Rectangle(2, 2), Rectangle(2, 2, Position(2, 0)),
+                 Rectangle(4, 2, Position(0, -2))});
 
-    Rectangles k{Rectangle(2,2), Rectangle(2,2,Position(2,0)),
-                 Rectangle(2,2,Position(4,0))};
-    Rectangles k2{Rectangle(2,2), Rectangle(2,2,Position(2,0)),
-                  Rectangle(4,2,Position(0,-2))};
-
-    Rectangle r = merge_all(k);
-    std::cout<<r.width()<<" "<<r.height()<<" "<<r.pos().x()<<" ";
-
-    Rectangle r2 = merge_all(k2);
-    std::cout<<r2.width()<<" "<<r2.height();
-}*/
+     Rectangle r = merge_all(k);
+     std::cout << r.width() << " " << r.height() << " " << r.pos().x() << " ";
+     r2 = merge_all(k2);
+     std::cout << r2.width() << " " << r2.height();
+     Vector vec1(1, 2);
+     Position pos1(vec1);
+     std::cout << pos1.x() << " " << pos1.y() << std::endl;
+}

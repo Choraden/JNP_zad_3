@@ -3,12 +3,25 @@
 
 #include <vector>
 
-class Vector {
-    int coor_x, coor_y;
+class Vector;
+class Position;
+
+
+class Abstract_point {
+protected:
+    int pos_x, pos_y;
 public:
-    Vector(int x, int y) : coor_x(x), coor_y(y) {}
+    Abstract_point(int x, int y);
+    explicit Abstract_point(const Vector&);
+    explicit Abstract_point(const Position&);
     int x() const;
     int y() const;
+};
+
+class Vector : public Abstract_point {
+public:
+    Vector(int x, int y);
+    explicit Vector(const Position&);
     Vector reflection() const;
     bool operator==(const Vector&) const;
     Vector& operator+=(const Vector&);
@@ -16,12 +29,10 @@ public:
 
 Vector operator+(Vector, const Vector&);
 
-class Position {
-    int pos_x, pos_y;
+class Position : public Abstract_point {
 public:
-    Position(int x, int y) : pos_x(x), pos_y(y) {}
-    int x() const;
-    int y() const;
+    Position(int x, int y);
+    explicit Position(const Vector&);
     Position reflection() const;
     static const Position& origin();
     bool operator==(const Position&) const;
@@ -46,18 +57,26 @@ public:
     Rectangle& operator+=(const Vector&);
 };
 
+Rectangle operator+(Rectangle, const Vector&);
+Rectangle operator+(const Vector&, Rectangle);
+
+
 class Rectangles{
-public:
     std::vector<Rectangle> recs;
-    Rectangles(std::initializer_list<Rectangle> r) : recs(r) {}
-    Rectangles() {}
-    int size() const;
+public:
+    Rectangles(std::initializer_list<Rectangle> &&);
+    Rectangles();
+    size_t size() const;
     Rectangles& operator+=(const Vector&);
     bool operator==(const Rectangles&) const;
+    Rectangle &operator[](const size_t i);
+    const Rectangle &operator[](const size_t i) const;
 };
 
 Rectangles operator+(Rectangles, const Vector&);
 Rectangles operator+(const Vector&, Rectangles);
+//Rectangles operator+(Rectangles&&, const Vector&);
+//Rectangles operator+(const Vector&, Rectangles&&);
 
 Rectangle merge_horizontally(const Rectangle& r1, const Rectangle& r2);
 Rectangle merge_vertically(const Rectangle& r1, const Rectangle& r2);
