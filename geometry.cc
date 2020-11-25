@@ -4,11 +4,11 @@
 
 
 ///< Abstract_point
-Abstract_point::Abstract_point(int x, int y) : pos_x(x), pos_y(y) {}
+Abstract_point::Abstract_point(int x, int y) : pos_x{x}, pos_y{y} {}
 
-Abstract_point::Abstract_point(const Vector& v) : pos_x(v.x()), pos_y(v.y()) {}
+Abstract_point::Abstract_point(const Vector& v) : pos_x{v.x()}, pos_y{v.y()} {}
 
-Abstract_point::Abstract_point(const Position& p) : pos_x(p.x()), pos_y(p.y()) {}
+Abstract_point::Abstract_point(const Position& p) : pos_x{p.x()}, pos_y{p.y()} {}
 
 int Abstract_point::x() const {
     return pos_x;
@@ -21,10 +21,6 @@ int Abstract_point::y() const {
 
 
 ///< Vector
-Vector::Vector(int x, int y) : Abstract_point(x, y) {}
-
-Vector::Vector(const Position& p) : Abstract_point(p) {}
-
 Vector Vector::reflection() const {
     return {pos_y, pos_x};
 }
@@ -45,10 +41,6 @@ Vector operator+(Vector v1, const Vector &v2) {
 ///<-----------
 
 ///< Position
-Position::Position(int x, int y) : Abstract_point(x, y) {}
-
-Position::Position(const Vector& v) : Abstract_point(v) {}
-
 Position Position::reflection() const {
     return {pos_y, pos_x};
 }
@@ -79,7 +71,7 @@ Position operator+(const Vector &v, Position p) {
 
 
 ///<Rectangle
-Rectangle::Rectangle(int width, int height, const Position &pos) : position(pos) {
+Rectangle::Rectangle(int width, int height, const Position &pos) : position{pos} {
     assert(height > 0 && width > 0);
     w = width;
     h = height;
@@ -101,7 +93,7 @@ Rectangle Rectangle::reflection() const {
     return {h, w, position.reflection()};
 }
 
-int Rectangle::area() const {
+long long Rectangle::area() const {
     return h * w;
 }
 
@@ -123,11 +115,6 @@ Rectangle operator+(const Vector &v, Rectangle p) {
 }
 
 ///<Rectangles
-
-Rectangles::Rectangles() {}
-
-Rectangles::Rectangles(std::initializer_list<Rectangle> &&r) : recs(r) {}
-
 size_t Rectangles::size() const {
     if (!recs.empty()) {
         return recs.size();
