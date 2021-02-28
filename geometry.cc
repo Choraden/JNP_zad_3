@@ -6,9 +6,9 @@
 ///< Abstract_point
 Abstract_point::Abstract_point(int x, int y) : pos_x{x}, pos_y{y} {}
 
-Abstract_point::Abstract_point(const Vector& v) : pos_x{v.x()}, pos_y{v.y()} {}
+Abstract_point::Abstract_point(const Vector &v) : pos_x{v.x()}, pos_y{v.y()} {}
 
-Abstract_point::Abstract_point(const Position& p) : pos_x{p.x()}, pos_y{p.y()} {}
+Abstract_point::Abstract_point(const Position &p) : pos_x{p.x()}, pos_y{p.y()} {}
 
 int Abstract_point::x() const {
     return pos_x;
@@ -17,7 +17,6 @@ int Abstract_point::x() const {
 int Abstract_point::y() const {
     return pos_y;
 }
-///---------------
 
 
 ///< Vector
@@ -38,7 +37,7 @@ Vector &Vector::operator+=(const Vector &v) {
 Vector operator+(Vector v1, const Vector &v2) {
     return v1 += v2;
 }
-///<-----------
+
 
 ///< Position
 Position Position::reflection() const {
@@ -67,7 +66,6 @@ Position operator+(Position p, const Vector &v) {
 Position operator+(const Vector &v, Position p) {
     return p += v;
 }
-///<-----------
 
 
 ///<Rectangle
@@ -114,6 +112,7 @@ Rectangle operator+(const Vector &v, Rectangle p) {
     return p += v;
 }
 
+
 ///<Rectangles
 size_t Rectangles::size() const {
     if (!recs.empty()) {
@@ -141,37 +140,38 @@ bool Rectangles::operator==(const Rectangles &r) const {
     return true;
 }
 
-Rectangles operator+(const Rectangles& r, const Vector &v) {
+Rectangles operator+(const Rectangles &r, const Vector &v) {
     Rectangles result(r);
-    result+=v;
+    result += v;
     return result;
 }
 
-Rectangles operator+(const Vector &v,const Rectangles& r) {
+Rectangles operator+(const Vector &v, const Rectangles &r) {
     return r + v;
 }
 
-Rectangles operator+(Rectangles&& r, const Vector& v) {
+Rectangles operator+(Rectangles &&r, const Vector &v) {
     Rectangles result(std::move(r));
-    result+=v;
+    result += v;
     return result;
 }
-Rectangles operator+(const Vector& v, Rectangles&& r) {
+
+Rectangles operator+(const Vector &v, Rectangles &&r) {
     return std::move(r) + v;
 }
 
-Rectangle& Rectangles::operator[](const size_t i) {
-    assert(i < recs.size());
-    return recs[i];
-}
-const Rectangle& Rectangles::operator[](const size_t i) const {
+Rectangle &Rectangles::operator[](const size_t i) {
     assert(i < recs.size());
     return recs[i];
 }
 
+const Rectangle &Rectangles::operator[](const size_t i) const {
+    assert(i < recs.size());
+    return recs[i];
+}
 
-///<-----------
 
+///<merge
 Rectangle merge_horizontally(const Rectangle &r1, const Rectangle &r2) {
     assert(r1.width() == r2.width() && r1.pos().x() == r2.pos().x() &&
            r1.pos().y() + r1.height() == r2.pos().y());
@@ -179,8 +179,8 @@ Rectangle merge_horizontally(const Rectangle &r1, const Rectangle &r2) {
 }
 
 Rectangle merge_vertically(const Rectangle &r1, const Rectangle &r2) {
-    assert (r1.height() == r2.height() && r1.pos().y() == r2.pos().y() &&
-            r1.pos().x() + r1.width() == r2.pos().x());
+    assert(r1.height() == r2.height() && r1.pos().y() == r2.pos().y() &&
+           r1.pos().x() + r1.width() == r2.pos().x());
     return {r1.width() + r2.width(), r2.height(), r1.pos()};
 }
 
